@@ -7,7 +7,8 @@
   <style>
     :root {
       --bg-color: #ffffff;
-      --text-color: #37352f;
+      /* 将默认主文字颜色调浅，契合原版柔和感 */
+      --text-color: #555555;
       --border-color: #e9e9e9;
       --hover-bg: rgba(0, 0, 0, 0.04);
       --today-border: #ff5c7c;
@@ -16,7 +17,7 @@
     @media (prefers-color-scheme: dark) {
       :root {
         --bg-color: #191919;
-        --text-color: #ffffff;
+        --text-color: #d0d0d0;
         --border-color: #2f2f2f;
         --hover-bg: rgba(255, 255, 255, 0.08);
         --today-border: #ff6b8b;
@@ -66,6 +67,7 @@
       font-weight: 600;
       font-size: 14px;
       letter-spacing: 0.3px;
+      color: #333333;
     }
 
     .btn {
@@ -92,20 +94,23 @@
       text-align: center;
     }
 
+    /* 英文星期：浅灰淡色，与原版对齐 */
     .day-name {
       font-size: 11px;
-      opacity: 0.5;
+      color: #999999;
       margin-bottom: 6px;
       font-weight: 600;
     }
 
+    /* 日期数字：调整为偏柔和的浅灰色 */
     .day {
       aspect-ratio: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 400;
+      color: #666666;
       border-radius: 50%;
       cursor: pointer;
       position: relative;
@@ -121,6 +126,7 @@
       cursor: default;
     }
 
+    /* 点击高亮的红粉渐变圆圈保持不变 */
     .day.period {
       background: linear-gradient(135deg, #ff6b8b 0%, #ff3b5c 100%);
       color: white;
