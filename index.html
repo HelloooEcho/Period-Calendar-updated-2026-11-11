@@ -6,7 +6,6 @@
   <title>Period Calendar</title>
   <style>
     :root {
-      /* 淡淡的暖黄色背景 */
       --bg-color: #fcfbf7;
       --text-color: #555555;
       --border-color: #f0eee6;
@@ -49,15 +48,15 @@
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    /* Period Calendar 颜色稍微加深一点 */
+    /* 调小倾斜度，改用更优雅温和的轻斜体 */
     .app-title {
       text-align: center;
       font-size: 12px;
-      font-weight: 600;
-      color: #6b6b70;
-      letter-spacing: 0.5px;
+      font-weight: 500;
+      color: #7a7a80;
+      letter-spacing: 0.8px;
       margin-bottom: 10px;
-      font-style: italic;
+      font-style: oblique 12deg; 
     }
 
     .header {
@@ -67,7 +66,6 @@
       margin-bottom: 12px;
     }
 
-    /* 2026/11 与下方日历数字大小、字重、颜色完全一致 */
     .month-year {
       font-size: 12px;
       font-weight: 400;
@@ -145,7 +143,7 @@
 <body>
 
 <div class="calendar-container">
-  <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
+  <div class="app-title">Period Calendar</div>
   <div class="header">
     <button class="btn" onclick="changeMonth(-1)">❮</button>
     <span class="month-year" id="monthYear"></span>
@@ -221,10 +219,16 @@
     }
   }
 
-  function changeMonth(delta) {
+  changeMonth(delta) {
     currentDate.setMonth(currentDate.getMonth() + delta);
     renderCalendar();
   }
+  
+  // 修正函数声明防止报错
+  window.changeMonth = function(delta) {
+    currentDate.setMonth(currentDate.getMonth() + delta);
+    renderCalendar();
+  };
 
   renderCalendar();
 </script>
