@@ -4,12 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Period Calendar Widget</title>
+  <!-- 引入 Google Sans 字体 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;500;700&display=swap">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      /* 优先使用 Google Sans / Product Sans */
+      font-family: "Product Sans", "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
@@ -21,7 +24,7 @@
     }
 
     .calendar-card {
-      width: 290px;
+      width: 280px;
       background: #ffffff;
       border-radius: 20px;
       padding: 16px 18px;
@@ -33,11 +36,11 @@
     /* 顶部 App 风格标题 */
     .app-title {
       text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: #8e8e93;
+      font-size: 11px;
+      font-weight: 400;
+      color: #999999;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-style: italic;
     }
 
@@ -46,23 +49,24 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       padding: 0 4px;
     }
 
+    /* 比星期的 12px 大一个字号 (13px) */
     .month-year {
-      font-size: 15px;
-      font-weight: 700;
-      color: #2c3e50;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333333;
     }
 
     .nav-btn {
       background: none;
       border: none;
-      font-size: 14px;
-      color: #a0a0a0;
+      font-size: 13px;
+      color: #b0b0b0;
       cursor: pointer;
-      padding: 4px 8px;
+      padding: 2px 6px;
       border-radius: 6px;
       transition: all 0.2s;
     }
@@ -72,7 +76,7 @@
       background: #f5f5f7;
     }
 
-    /* 星期头部与日历网格 */
+    /* 星期表头与日历网格 */
     .weekdays, .days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -80,27 +84,29 @@
     }
 
     .weekdays {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
+    /* 星期字号 12px */
     .weekday {
-      font-size: 11px;
-      font-weight: 600;
-      color: #b0b0b0;
+      font-size: 12px;
+      font-weight: 400;
+      color: #a0a0a0;
       padding: 4px 0;
     }
 
     .days {
-      row-gap: 6px;
+      row-gap: 4px;
     }
 
+    /* 日期数字：取消粗体，恢复自然纤细感 */
     .day {
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 400;
       color: #333333;
-      height: 32px;
-      width: 32px;
-      line-height: 32px;
+      height: 30px;
+      width: 30px;
+      line-height: 30px;
       margin: 0 auto;
       border-radius: 50%;
       display: flex;
@@ -114,11 +120,11 @@
       cursor: default;
     }
 
-    /* 经期粉红圆圈高亮样式 */
+    /* 经期高亮粉红圆圈 */
     .day.period {
       background: linear-gradient(135deg, #ff5e7e 0%, #ff3b68 100%);
       color: #ffffff;
-      font-weight: 700;
+      font-weight: 500;
       box-shadow: 0 3px 8px rgba(255, 60, 100, 0.35);
     }
 
@@ -131,83 +137,4 @@
 
   <div class="calendar-card">
     <!-- 主标题 -->
-    <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
-    
-    <!-- 年月控制栏 -->
-    <div class="header">
-      <button class="nav-btn" onclick="changeMonth(-1)">&lt;</button>
-      <div class="month-year" id="monthYear">2026/11</div>
-      <button class="nav-btn" onclick="changeMonth(1)">&gt;</button>
-    </div>
-
-    <!-- 英文星期表头 -->
-    <div class="weekdays">
-      <div class="weekday">Sun</div>
-      <div class="weekday">Mon</div>
-      <div class="weekday">Tue</div>
-      <div class="weekday">Wed</div>
-      <div class="weekday">Thu</div>
-      <div class="weekday">Fri</div>
-      <div class="weekday">Sat</div>
-    </div>
-
-    <!-- 日期面板 -->
-    <div class="days" id="daysContainer"></div>
-  </div>
-
-  <script>
-    // 当前显示的年月设置（默认 2026 年 11 月）
-    let currentDate = new Date(2026, 10, 1); 
-
-    // 自定义高亮日期 (示例：2026年11月6日 - 12日)
-    const periodDates = [
-      '2026-11-06', '2026-11-07', '2026-11-08', 
-      '2026-11-09', '2026-11-10', '2026-11-11', '2026-11-12'
-    ];
-
-    function renderCalendar() {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-
-      // 更新顶部 2026/11 格式
-      const formattedMonth = String(month + 1).padStart(2, '0');
-      document.getElementById('monthYear').textContent = `${year}/${formattedMonth}`;
-
-      const firstDayIndex = new Date(year, month, 1).getDay();
-      const lastDay = new Date(year, month + 1, 0).getDate();
-
-      const daysContainer = document.getElementById('daysContainer');
-      daysContainer.innerHTML = '';
-
-      // 填充当月第一天前的空白格子
-      for (let i = 0; i < firstDayIndex; i++) {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.classList.add('day');
-        daysContainer.appendChild(emptyDiv);
-      }
-
-      // 渲染日期
-      for (let day = 1; day <= lastDay; day++) {
-        const dayDiv = document.createElement('div');
-        dayDiv.classList.add('day');
-        dayDiv.textContent = day;
-
-        const dateStr = `${year}-${formattedMonth}-${String(day).padStart(2, '0')}`;
-        if (periodDates.includes(dateStr)) {
-          dayDiv.classList.add('period');
-        }
-
-        daysContainer.appendChild(dayDiv);
-      }
-    }
-
-    function changeMonth(delta) {
-      currentDate.setMonth(currentDate.getMonth() + delta);
-      renderCalendar();
-    }
-
-    // 初始化运行
-    renderCalendar();
-  </script>
-</body>
-</html>
+    <div class="app-title">𝑷𝒆
