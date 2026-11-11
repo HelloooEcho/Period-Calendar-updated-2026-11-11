@@ -6,19 +6,19 @@
   <title>Period Calendar</title>
   <style>
     :root {
-      --bg-color: #ffffff;
-      /* 将默认主文字颜色调整为与上方原版完全一致的轻柔浅黑灰色 */
-      --text-color: #37352f;
-      --border-color: #e9e9e9;
+      /* 淡淡的暖黄色背景 */
+      --bg-color: #fcfbf7;
+      --text-color: #555555;
+      --border-color: #f0eee6;
       --hover-bg: rgba(0, 0, 0, 0.04);
       --today-border: #ff5c7c;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg-color: #191919;
-        --text-color: #ffffff;
-        --border-color: #2f2f2f;
+        --bg-color: #1c1c1b;
+        --text-color: #d0d0d0;
+        --border-color: #2a2a28;
         --hover-bg: rgba(255, 255, 255, 0.08);
         --today-border: #ff6b8b;
       }
@@ -49,11 +49,12 @@
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
+    /* Period Calendar 颜色稍微加深一点 */
     .app-title {
       text-align: center;
       font-size: 12px;
-      font-weight: 500;
-      color: #8e8e93;
+      font-weight: 600;
+      color: #6b6b70;
       letter-spacing: 0.5px;
       margin-bottom: 10px;
       font-style: italic;
@@ -64,16 +65,21 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      font-weight: 600;
-      font-size: 14px;
-      letter-spacing: 0.3px;
+    }
+
+    /* 2026/11 与下方日历数字大小、字重、颜色完全一致 */
+    .month-year {
+      font-size: 12px;
+      font-weight: 400;
+      color: #666666;
+      letter-spacing: 0.2px;
     }
 
     .btn {
       background: none;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       color: inherit;
       opacity: 0.5;
       padding: 4px 8px;
@@ -93,15 +99,13 @@
       text-align: center;
     }
 
-    /* 英文星期：完美对齐原版上方星期的浅淡通透度 */
     .day-name {
       font-size: 11px;
-      opacity: 0.45;
+      color: #999999;
       margin-bottom: 6px;
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    /* 日期数字：调整通透度，和上面原版深浅完全一致 */
     .day {
       aspect-ratio: 1;
       display: flex;
@@ -109,7 +113,7 @@
       justify-content: center;
       font-size: 12px;
       font-weight: 400;
-      opacity: 0.85;
+      color: #666666;
       border-radius: 50%;
       cursor: pointer;
       position: relative;
@@ -118,7 +122,6 @@
 
     .day:not(.empty):hover {
       background: var(--hover-bg);
-      opacity: 1;
       transform: scale(1.08);
     }
 
@@ -126,19 +129,16 @@
       cursor: default;
     }
 
-    /* 点击高亮的粉红渐变圆圈（高亮时保持不透明，确保清晰醒目） */
     .day.period {
       background: linear-gradient(135deg, #ff6b8b 0%, #ff3b5c 100%);
       color: white;
       font-weight: 600;
-      opacity: 1;
       box-shadow: 0 2px 6px rgba(255, 59, 92, 0.35);
     }
 
     .day.today:not(.period) {
       border: 1.5px solid var(--today-border);
       font-weight: 600;
-      opacity: 1;
     }
   </style>
 </head>
@@ -148,7 +148,7 @@
   <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
   <div class="header">
     <button class="btn" onclick="changeMonth(-1)">❮</button>
-    <span id="monthYear"></span>
+    <span class="month-year" id="monthYear"></span>
     <button class="btn" onclick="changeMonth(1)">❯</button>
   </div>
   <div class="grid" id="calendarGrid"></div>
