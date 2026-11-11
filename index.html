@@ -48,7 +48,7 @@
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    /* 顶部精致小标题样式 */
+    /* 顶部精致小标题 */
     .app-title {
       text-align: center;
       font-size: 12px;
@@ -120,113 +120,4 @@
     }
 
     .day.empty {
-      cursor: default;
-    }
-
-    /* 点击高亮的红粉渐变圆圈 */
-    .day.period {
-      background: linear-gradient(135deg, #ff6b8b 0%, #ff3b5c 100%);
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(255, 59, 92, 0.35);
-    }
-
-    .day.today:not(.period) {
-      border: 1.5px solid var(--today-border);
-      font-weight: 600;
-    }
-  </style>
-</head>
-<body>
-
-<div class="calendar-container">
-  <!-- 顶部标题 -->
-  <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
-
-  <div class="header">
-    <button class="btn" onclick="changeMonth(-1)">❮</button>
-    <span id="monthYear"></span>
-    <button class="btn" onclick="changeMonth(1)">❯</button>
-  </div>
-  <div class="grid" id="calendarGrid"></div>
-</div>
-
-<script>
-  let currentDate = new Date();
-  const STORAGE_KEY = 'period_dates_store';
-
-  function getStoredDates() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  }
-
-  function toggleDate(dateStr) {
-    let dates = getStoredDates();
-    const idx = dates.indexOf(dateStr);
-    if (idx > -1) {
-      dates.splice(idx, 1);
-    } else {
-      dates.push(dateStr);
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dates));
-    renderCalendar();
-  }
-
-  function renderCalendar() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    
-    // 强制转换为 YYYY/MM 格式
-    const formattedMonth = String(month + 1).padStart(2, '0');
-    document.getElementById('monthYearinnerText') || (document.getElementById('monthYear').innerText = `${year}/${formattedMonth}`);
-
-    const grid = document.getElementById('calendarGrid');
-    grid.innerHTML = '';
-
-    // 英文星期缩写表头
-    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    weekDays.forEach(d => {
-      const el = document.createElement('div');
-      el.className = 'day-name';
-      el.innerText = d;
-      grid.appendChild(el);
-    });
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const storedDates = getStoredDates();
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    for (let i = 0; i < firstDay; i++) {
-      const el = document.createElement('div');
-      el.className = 'day empty';
-      grid.appendChild(el);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const el = document.createElement('div');
-      el.className = 'day';
-      el.innerText = day;
-
-      if (storedDates.includes(dateStr)) {
-        el.classList.add('period');
-      }
-      if (dateStr === todayStr) {
-        el.classList.add('today');
-      }
-
-      el.onclick = () => toggleDate(dateStr);
-      grid.appendChild(el);
-    }
-  }
-
-  function changeMonth(delta) {
-    currentDate.setMonth(currentDate.getMonth() + delta);
-    renderCalendar();
-  }
-
-  renderCalendar();
-</script>
-
-</body>
-</html>
+      cursor: default
