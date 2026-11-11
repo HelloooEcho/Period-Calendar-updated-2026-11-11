@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Period Calendar</title>
+  <!-- 引入 Google Sans 字体 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;500;700&display=swap">
   <style>
     :root {
       --bg-color: #ffffff;
-      /* 将默认主文字颜色调浅，契合原版柔和感 */
       --text-color: #555555;
       --border-color: #e9e9e9;
       --hover-bg: rgba(0, 0, 0, 0.04);
@@ -25,7 +26,8 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      /* 除标题外的所有默认文本统一使用 Google Sans */
+      font-family: "Product Sans", "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: transparent;
       margin: 0;
       padding: 8px;
@@ -49,6 +51,7 @@
       transition: background 0.3s ease, border-color 0.3s ease;
     }
 
+    /* 顶部标题：保持其专属斜体与独立风格 */
     .app-title {
       text-align: center;
       font-size: 12px;
@@ -65,167 +68,3 @@
       align-items: center;
       margin-bottom: 12px;
       font-weight: 600;
-      font-size: 14px;
-      letter-spacing: 0.3px;
-      color: #333333;
-    }
-
-    .btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      color: inherit;
-      opacity: 0.5;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: opacity 0.2s, background 0.2s;
-    }
-
-    .btn:hover {
-      opacity: 1;
-      background: var(--hover-bg);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      text-align: center;
-    }
-
-    /* 英文星期：浅灰淡色，与原版对齐 */
-    .day-name {
-      font-size: 11px;
-      color: #999999;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-
-    /* 日期数字：调整为偏柔和的浅灰色 */
-    .day {
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 400;
-      color: #666666;
-      border-radius: 50%;
-      cursor: pointer;
-      position: relative;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .day:not(.empty):hover {
-      background: var(--hover-bg);
-      transform: scale(1.08);
-    }
-
-    .day.empty {
-      cursor: default;
-    }
-
-    /* 点击高亮的红粉渐变圆圈保持不变 */
-    .day.period {
-      background: linear-gradient(135deg, #ff6b8b 0%, #ff3b5c 100%);
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(255, 59, 92, 0.35);
-    }
-
-    .day.today:not(.period) {
-      border: 1.5px solid var(--today-border);
-      font-weight: 600;
-    }
-  </style>
-</head>
-<body>
-
-<div class="calendar-container">
-  <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
-  <div class="header">
-    <button class="btn" onclick="changeMonth(-1)">❮</button>
-    <span id="monthYear"></span>
-    <button class="btn" onclick="changeMonth(1)">❯</button>
-  </div>
-  <div class="grid" id="calendarGrid"></div>
-</div>
-
-<script>
-  let currentDate = new Date();
-  const STORAGE_KEY = 'period_dates_store';
-
-  function getStoredDates() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  }
-
-  function toggleDate(dateStr) {
-    let dates = getStoredDates();
-    const idx = dates.indexOf(dateStr);
-    if (idx > -1) {
-      dates.splice(idx, 1);
-    } else {
-      dates.push(dateStr);
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dates));
-    renderCalendar();
-  }
-
-  function renderCalendar() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    
-    const formattedMonth = String(month + 1).padStart(2, '0');
-    document.getElementById('monthYear').innerText = year + '/' + formattedMonth;
-
-    const grid = document.getElementById('calendarGrid');
-    grid.innerHTML = '';
-
-    const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    weekDays.forEach(function(d) {
-      const el = document.createElement('div');
-      el.className = 'day-name';
-      el.innerText = d;
-      grid.appendChild(el);
-    });
-
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const storedDates = getStoredDates();
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    for (let i = 0; i < firstDay; i++) {
-      const el = document.createElement('div');
-      el.className = 'day empty';
-      grid.appendChild(el);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-      const el = document.createElement('div');
-      el.className = 'day';
-      el.innerText = day;
-
-      if (storedDates.includes(dateStr)) {
-        el.classList.add('period');
-      }
-      if (dateStr === todayStr) {
-        el.classList.add('today');
-      }
-
-      el.onclick = function() { toggleDate(dateStr); };
-      grid.appendChild(el);
-    }
-  }
-
-  function changeMonth(delta) {
-    currentDate.setMonth(currentDate.getMonth() + delta);
-    renderCalendar();
-  }
-
-  renderCalendar();
-</script>
-
-</body>
-</html>
