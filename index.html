@@ -6,7 +6,6 @@
   <title>Period Calendar</title>
   <style>
     :root {
-      /* 淡淡的暖黄色背景 */
       --bg-color: #fcfbf7;
       --text-color: #555555;
       --border-color: #f0eee6;
@@ -47,9 +46,9 @@
       width: 100%;
       box-sizing: border-box;
       transition: background 0.3s ease, border-color 0.3s ease;
+      position: relative;
     }
 
-    /* Period Calendar 颜色稍微加深一点 */
     .app-title {
       text-align: center;
       font-size: 12px;
@@ -58,7 +57,22 @@
       letter-spacing: 0.5px;
       margin-bottom: 10px;
       font-style: italic;
+      transform: skewX(-8deg);
     }
+
+    .sync-dot {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #d0d0d0;
+      transition: background 0.3s;
+    }
+    .sync-dot.syncing { background: #f5a623; }
+    .sync-dot.synced { background: #7ed321; }
+    .sync-dot.error { background: #ff3b5c; }
 
     .header {
       display: flex;
@@ -67,7 +81,6 @@
       margin-bottom: 12px;
     }
 
-    /* 2026/11 与下方日历数字大小、字重、颜色完全一致 */
     .month-year {
       font-size: 12px;
       font-weight: 400;
@@ -145,7 +158,8 @@
 <body>
 
 <div class="calendar-container">
-  <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
+  <div class="sync-dot" id="syncDot" title="Cloud Sync Status"></div>
+  <div class="app-title">Period Calendar</div>
   <div class="header">
     <button class="btn" onclick="changeMonth(-1)">❮</button>
     <span class="month-year" id="monthYear"></span>
@@ -155,23 +169,67 @@
 </div>
 
 <script>
-  let currentDate = new Date();
-  const STORAGE_KEY = 'period_dates_store';
+  // ====== 请在这里填入你的 JSONBin 信息 ======
+  const BIN_ID = '6af564b0ac6210605a819234'; 
+  const API_KEY = '$2a$10$1Yq5nYOom7qmzBGEfQfIJ.8d1iHMuVl1CLUUnKktr7fwLn/0y1DoK';
+  // ==========================================
 
-  function getStoredDates() {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let currentDate = new Date();
+  let storedDates = [];
+  const syncDot = document.getElementById('syncDot');
+
+  function setSyncStatus(status) {
+    syncDot.className = 'sync-dot ' + status;
+  }
+
+  // 从云端拉取最新经期记录
+  async function fetchCloudDates() {
+    setSyncStatus('syncing');
+    try {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': API_KEY }
+      });
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+      storedDates = (data.record && Array.isArray(data.record.dates)) ? data.record.dates : [];
+      setSyncStatus('synced');
+      renderCalendar();
+    } catch (err) {
+      console.error(err);
+      setSyncStatus('error');
+    }
+  }
+
+  // 将更新后的经期记录自动保存到云端
+  async function saveCloudDates() {
+    setSyncStatus('syncing');
+    try {
+      const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': API_KEY
+        },
+        body: JSON.stringify({ dates: storedDates })
+      });
+      if (!res.ok) throw new Error('Save failed');
+      setSyncStatus('synced');
+    } catch (err) {
+      console.error(err);
+      setSyncStatus('error');
+    }
   }
 
   function toggleDate(dateStr) {
-    let dates = getStoredDates();
-    const idx = dates.indexOf(dateStr);
+    const idx = storedDates.indexOf(dateStr);
     if (idx > -1) {
-      dates.splice(idx, 1);
+      storedDates.splice(idx, 1);
     } else {
-      dates.push(dateStr);
+      storedDates.push(dateStr);
     }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dates));
+    storedDates.sort();
     renderCalendar();
+    saveCloudDates();
   }
 
   function renderCalendar() {
@@ -194,7 +252,6 @@
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const storedDates = getStoredDates();
     const todayStr = new Date().toISOString().split('T')[0];
 
     for (let i = 0; i < firstDay; i++) {
@@ -221,12 +278,13 @@
     }
   }
 
-  function changeMonth(delta) {
+  window.changeMonth = function(delta) {
     currentDate.setMonth(currentDate.getMonth() + delta);
     renderCalendar();
-  }
+  };
 
   renderCalendar();
+  fetchCloudDates();
 </script>
 
 </body>
