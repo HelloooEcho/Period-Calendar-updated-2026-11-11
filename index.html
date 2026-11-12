@@ -6,6 +6,7 @@
   <title>Period Calendar</title>
   <style>
     :root {
+      /* 淡淡的暖黄色背景 */
       --bg-color: #fcfbf7;
       --text-color: #555555;
       --border-color: #f0eee6;
@@ -49,6 +50,7 @@
       position: relative;
     }
 
+    /* Period Calendar 保持你最开始的专属样式 */
     .app-title {
       text-align: center;
       font-size: 12px;
@@ -57,9 +59,9 @@
       letter-spacing: 0.5px;
       margin-bottom: 10px;
       font-style: italic;
-      transform: skewX(-8deg);
     }
 
+    /* 右上角极简云端同步状态小圆点 */
     .sync-dot {
       position: absolute;
       top: 16px;
@@ -81,6 +83,7 @@
       margin-bottom: 12px;
     }
 
+    /* 2026/11 与下方日历数字大小、字重、颜色完全一致 */
     .month-year {
       font-size: 12px;
       font-weight: 400;
@@ -159,7 +162,7 @@
 
 <div class="calendar-container">
   <div class="sync-dot" id="syncDot" title="Cloud Sync Status"></div>
-  <div class="app-title">Period Calendar</div>
+  <div class="app-title">𝑷𝒆𝒓𝒊𝒐𝒅 𝑪𝒂𝒍𝒆𝒏𝒅𝒂𝒓</div>
   <div class="header">
     <button class="btn" onclick="changeMonth(-1)">❮</button>
     <span class="month-year" id="monthYear"></span>
@@ -169,10 +172,10 @@
 </div>
 
 <script>
-  // ====== 请在这里填入你的 JSONBin 信息 ======
+  // ====== 请将下面引号内的内容换成你刚才复制的真实凭证 ======
   const BIN_ID = '6af564b0ac6210605a819234'; 
   const API_KEY = '$2a$10$1Yq5nYOom7qmzBGEfQfIJ.8d1iHMuVl1CLUUnKktr7fwLn/0y1DoK';
-  // ==========================================
+  // ========================================================
 
   let currentDate = new Date();
   let storedDates = [];
@@ -182,7 +185,7 @@
     syncDot.className = 'sync-dot ' + status;
   }
 
-  // 从云端拉取最新经期记录
+  // 从云端自动拉取经期数据
   async function fetchCloudDates() {
     setSyncStatus('syncing');
     try {
@@ -200,7 +203,7 @@
     }
   }
 
-  // 将更新后的经期记录自动保存到云端
+  // 每次点击时自动保存到云端
   async function saveCloudDates() {
     setSyncStatus('syncing');
     try {
@@ -278,10 +281,10 @@
     }
   }
 
-  window.changeMonth = function(delta) {
+  function changeMonth(delta) {
     currentDate.setMonth(currentDate.getMonth() + delta);
     renderCalendar();
-  };
+  }
 
   renderCalendar();
   fetchCloudDates();
